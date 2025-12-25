@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/mikegmatthews/pokedexcli/pokeapi"
+	"github.com/mikegmatthews/pokedexcli/internal/pokeapi"
 )
 
 type cliCommand struct {
