@@ -7,6 +7,8 @@ import (
 )
 
 func main() {
+	mapCmdConfig := cmdConfig{}
+
 	cliRegistry = map[string]cliCommand{
 		"exit": {
 			name:        "exit",
@@ -17,6 +19,18 @@ func main() {
 			name:        "help",
 			description: "Displays a help message",
 			callback:    commandHelp,
+		},
+		"map": {
+			name:        "map",
+			description: "Displays the next 20 map locations",
+			config:      &mapCmdConfig,
+			callback:    commandMap,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "Displays the previous 20 map locations",
+			config:      &mapCmdConfig,
+			callback:    commandMapB,
 		},
 	}
 
@@ -32,7 +46,7 @@ func main() {
 			if len(inParams) > 0 {
 				command, ok := cliRegistry[inParams[0]]
 				if ok {
-					err := command.callback()
+					err := command.callback(command.config)
 					if err != nil {
 						fmt.Println(err)
 					}
