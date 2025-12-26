@@ -75,7 +75,12 @@ type LocationArea struct {
 	} `json:"pokemon_encounters"`
 }
 
-var cache = pokecache.NewCache(5 * time.Second)
+var cache *pokecache.Cache
+
+func init() {
+	fmt.Println("Initializing PokeApi...")
+	cache = pokecache.NewCache(5 * time.Second)
+}
 
 func GetLocationAreas(url string) (*APIResource, error) {
 	var areas APIResource
