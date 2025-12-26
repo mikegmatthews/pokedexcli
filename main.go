@@ -32,6 +32,11 @@ func main() {
 			config:      &mapCmdConfig,
 			callback:    commandMapB,
 		},
+		"explore": {
+			name:        "explore",
+			description: "Lists all Pokemon encounters for a given area",
+			callback:    commandExplore,
+		},
 	}
 
 	userInput := bufio.NewScanner(os.Stdin)
@@ -46,7 +51,7 @@ func main() {
 			if len(inParams) > 0 {
 				command, ok := cliRegistry[inParams[0]]
 				if ok {
-					err := command.callback(command.config)
+					err := command.callback(command.config, inParams[1:]...)
 					if err != nil {
 						fmt.Println(err)
 					}
