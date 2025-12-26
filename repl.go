@@ -11,7 +11,7 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*cmdConfig) error
+	callback    func(*cmdConfig, ...string) error
 	config      *cmdConfig
 }
 
@@ -32,13 +32,13 @@ func cleanInput(text string) []string {
 	return cleaned
 }
 
-func commandExit(_ *cmdConfig) error {
+func commandExit(_ *cmdConfig, _ ...string) error {
 	fmt.Println("Closing the Pokedex... Goodbye!")
 	os.Exit(0)
 	return nil
 }
 
-func commandHelp(_ *cmdConfig) error {
+func commandHelp(_ *cmdConfig, _ ...string) error {
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage:")
 	fmt.Println()
@@ -50,7 +50,7 @@ func commandHelp(_ *cmdConfig) error {
 	return nil
 }
 
-func commandMap(cfg *cmdConfig) error {
+func commandMap(cfg *cmdConfig, _ ...string) error {
 	var nextUrl string
 	if cfg.next != nil {
 		nextUrl = *cfg.next
@@ -73,7 +73,7 @@ func commandMap(cfg *cmdConfig) error {
 	return nil
 }
 
-func commandMapB(cfg *cmdConfig) error {
+func commandMapB(cfg *cmdConfig, _ ...string) error {
 	if cfg.previous == nil {
 		fmt.Println("You're on the first page")
 		return nil
@@ -90,6 +90,24 @@ func commandMapB(cfg *cmdConfig) error {
 
 	cfg.next = areas.Next
 	cfg.previous = areas.Previous
+
+	return nil
+}
+
+func commandExplore(cfg *cmdConfig, args ...string) error {
+	if len(args) == 0 {
+		return fmt.Errorf("explore requires a location name")
+	}
+
+	areaName := args[0]
+	pokemon, err := pokeapi.GetPokemonEncounters(areaName)
+	if err != nil {
+		return err
+	}
+
+	for _, p := range pokemon {
+		fmt.Println(p)
+	}
 
 	return nil
 }
