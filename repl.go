@@ -126,6 +126,7 @@ func commandCatch(_ *cmdConfig, args ...string) error {
 	baseExp := pokemon.BaseExperience
 	if rand.Intn(baseExp) > (baseExp / 2) {
 		fmt.Printf("%s was caught!\n", pokeName)
+		fmt.Println("You may now inspect it with the inspect command.")
 		pokeDex.Caught(pokemon)
 	} else {
 		fmt.Printf("%s escaped!\n", pokeName)
@@ -156,6 +157,21 @@ func commandInspect(_ *cmdConfig, args ...string) error {
 	fmt.Println("Types:")
 	for _, t := range pokemon.Types {
 		fmt.Printf("\t- %s\n", t.Type.Name)
+	}
+
+	return nil
+}
+
+func commandPokedex(_ *cmdConfig, _ ...string) error {
+	pokemon := pokeDex.GetAllPokemonNames()
+	if len(pokemon) == 0 {
+		fmt.Println("No Pokemon have been caught yet")
+		return nil
+	}
+
+	fmt.Println("Your Pokedex:")
+	for _, name := range pokemon {
+		fmt.Printf("\t- %s\n", name)
 	}
 
 	return nil

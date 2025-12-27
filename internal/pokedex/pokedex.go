@@ -36,3 +36,16 @@ func (p *Pokedex) Inspect(name string) *pokeapi.Pokemon {
 		return nil
 	}
 }
+
+func (p *Pokedex) GetAllPokemonNames() []string {
+	pokemon := make([]string, 0)
+
+	p.lock.Lock()
+	defer p.lock.Unlock()
+
+	for name := range p.dex {
+		pokemon = append(pokemon, name)
+	}
+
+	return pokemon
+}
