@@ -24,3 +24,15 @@ func (p *Pokedex) Caught(pokemon *pokeapi.Pokemon) {
 
 	p.dex[pokemon.Name] = pokemon
 }
+
+func (p *Pokedex) Inspect(name string) *pokeapi.Pokemon {
+	p.lock.Lock()
+	defer p.lock.Unlock()
+
+	poke, ok := p.dex[name]
+	if ok {
+		return poke
+	} else {
+		return nil
+	}
+}

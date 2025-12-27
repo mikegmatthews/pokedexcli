@@ -133,3 +133,30 @@ func commandCatch(_ *cmdConfig, args ...string) error {
 
 	return nil
 }
+
+func commandInspect(_ *cmdConfig, args ...string) error {
+	if len(args) == 0 {
+		return fmt.Errorf("inspect requies a Pokemon name")
+	}
+
+	pokeName := args[0]
+	pokemon := pokeDex.Inspect(pokeName)
+
+	if pokemon == nil {
+		return fmt.Errorf("you have not caught that pokemon")
+	}
+
+	fmt.Printf("Name: %s\n", pokemon.Name)
+	fmt.Printf("Height: %d\n", pokemon.Height)
+	fmt.Printf("Weight: %d\n", pokemon.Weight)
+	fmt.Println("Stats:")
+	for _, stat := range pokemon.Stats {
+		fmt.Printf("\t- %s: %v\n", stat.Stat.Name, stat.BaseStat)
+	}
+	fmt.Println("Types:")
+	for _, t := range pokemon.Types {
+		fmt.Printf("\t- %s\n", t.Type.Name)
+	}
+
+	return nil
+}
