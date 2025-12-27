@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 	"strings"
 
@@ -19,8 +20,6 @@ type cmdConfig struct {
 	next     *string
 	previous *string
 }
-
-var cliRegistry map[string]cliCommand
 
 func cleanInput(text string) []string {
 	cleaned := make([]string, 0)
@@ -94,7 +93,7 @@ func commandMapB(cfg *cmdConfig, _ ...string) error {
 	return nil
 }
 
-func commandExplore(cfg *cmdConfig, args ...string) error {
+func commandExplore(_ *cmdConfig, args ...string) error {
 	if len(args) == 0 {
 		return fmt.Errorf("explore requires a location name")
 	}
@@ -107,6 +106,29 @@ func commandExplore(cfg *cmdConfig, args ...string) error {
 
 	for _, p := range pokemon {
 		fmt.Println(p)
+	}
+
+	return nil
+}
+
+func commandCatch(_ *cmdConfig, args ...string) error {
+	if len(args) == 0 {
+		return fmt.Errorf("catch requires a Pokemon name")
+	}
+
+	pokeName := args[0]
+	pokemon, err := pokeapi.GetPokemon(pokeName)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Throwing a Pokeball at %s...\n", pokeName)
+	baseExp := pokemon.BaseExperience
+	if rand.Intn(baseExp) > (baseExp / 2) {
+		fmt.Printf("%s was caught!\n", pokeName)
+		pokeDex.Caught(pokemon)
+	} else {
+		fmt.Printf("%s escaped!\n", pokeName)
 	}
 
 	return nil

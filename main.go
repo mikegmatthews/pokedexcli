@@ -4,10 +4,16 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+
+	"github.com/mikegmatthews/pokedexcli/internal/pokedex"
 )
 
-func main() {
+var cliRegistry map[string]cliCommand
+var pokeDex *pokedex.Pokedex
+
+func init() {
 	mapCmdConfig := cmdConfig{}
+	pokeDex = pokedex.NewPokedex()
 
 	cliRegistry = map[string]cliCommand{
 		"exit": {
@@ -37,8 +43,15 @@ func main() {
 			description: "Lists all Pokemon encounters for a given area",
 			callback:    commandExplore,
 		},
+		"catch": {
+			name:        "catch",
+			description: "Attempt to catch a given Pokemon",
+			callback:    commandCatch,
+		},
 	}
+}
 
+func main() {
 	userInput := bufio.NewScanner(os.Stdin)
 
 	for true {

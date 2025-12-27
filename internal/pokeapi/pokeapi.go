@@ -78,7 +78,6 @@ type LocationArea struct {
 var cache *pokecache.Cache
 
 func init() {
-	fmt.Println("Initializing PokeApi...")
 	cache = pokecache.NewCache(5 * time.Second)
 }
 
@@ -152,4 +151,34 @@ func GetPokemonEncounters(areaName string) ([]string, error) {
 	}
 
 	return pokemon, nil
+}
+
+func GetPokemon(name string) (*Pokemon, error) {
+	var pokemon Pokemon
+
+	urlFmt := "https://pokeapi.co/api/v2/pokemon/%s"
+	url := fmt.Sprintf(urlFmt, name)
+
+	data, ok := cache.Get(url)
+	if !ok {
+		resp, err := http.Get(url)
+		if err != nil {
+			return nil, fmt.Errorf("GET error in GetPokemon: %v", err)
+		}
+		defer resp.Body.Close()
+
+		data, err = io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, fmt.Errorf("Error trying to catch Pokemon: %v", err)
+		}
+
+		cache.Add(url, data)
+	}
+
+	err := json.Unmarshal(data, &pokemon)
+	if err != nil {
+		return nil, fmt.Errorf("Error decoding JSON: %v", err)
+	}
+
+	return &pokemon, nil
 }
